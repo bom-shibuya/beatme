@@ -25,7 +25,7 @@ export default Vue.extend({
   },
   mounted() {
     const padBtn = <HTMLElement>this.$refs.padBtn;
-    this.getAudioBuffer(this.sound.source, (buffer: object) => {
+    this.getAudioBuffer(this.sound.source, (buffer: AudioBuffer) => {
       this.buffer = buffer;
       this.ready = true;
       padBtn.addEventListener(EVENT_NAME, () => {

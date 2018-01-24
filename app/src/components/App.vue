@@ -47,7 +47,13 @@ export default Vue.extend({
       ],
       audioContext: <any>{},
       error: true,
-      errorMsg: <string>''
+      errorMsg: <string>'',
+      effector: {
+        distortion: {
+          connect: false,
+          level: 0
+        }
+      }
     }
   },
   components: {
@@ -66,29 +72,63 @@ export default Vue.extend({
 
   },
   methods: {
-    getAudioBuffer(uri: string, cb: (buffer: object) => void):object {
+    getAudioBuffer(uri: string, cb: (buffer: AudioBuffer) => AudioBuffer):object {
       return axios(uri, { responseType: 'arraybuffer' })
         .then(({data}) => {
-          return this.audioContext.decodeAudioData(data, (buffer: object) => {
+          return this.audioContext.decodeAudioData(data, (buffer: AudioBuffer) => {
             cb(buffer);
           });
         });
     },
 
-    playSound(buffer: string):void {
+    playSound(buffer: AudioBuffer):void {
       const source = this.audioContext.createBufferSource();
-      const filter = this.audioContext.createBiquadFilter();
-      const filter2 = this.audioContext.createBiquadFilter();
       source.buffer = buffer;
-      source.connect(filter);
-      source.connect(filter2);
-      filter2.type = 'highshelf';
-      filter2.frequency.value = 100;
-      filter2.connect(this.audioContext.destination);
-      filter.type = 'lowpass';
-      filter.frequency.value = 1000;
-      filter.connect(this.audioContext.destination);
+      this.useDistortion(source).connect(this.audioContext.destination);
       source.start(0);
+    },
+
+    useDistortion(source: AudioNode):AudioNode {
+      if (this.effector.distortion.connect) {
+        const distortion = this.audioContext.createWaveShaper();
+        source.connect(distortion);
+        distortion.connect(this.audioContext.destination);
+
+        // 配列のサイズだけどあまり影響ないのでとりあえず4096
+        const NUM_SAMPLES: number = 4096;
+        distortion.curve = this.createCurveForDistortion(
+          this.effector.distortion.level,
+          NUM_SAMPLES
+        );
+
+        return distortion;
+      } else {
+        return source;
+      }
+
+    },
+
+
+    /**
+    * https://stackoverflow.com/questions/7840347/web-audio-api-waveshapernode
+    * @param {number} amount 0 < amout < 1 distortion level
+    * @param {number} numberOfSample size of Float32Array
+    * @return {Float32Array|null} curver property
+    */
+    createCurveForDistortion(amount: number, numberOfSample: number): Float32Array | null {
+      if (amount > 0 && amount <1) {
+        const curves = new Float32Array(numberOfSample);
+        const k = (2 * amount) / (1 - amount);
+        for (let i = 0; i < numberOfSample; i++) {
+          // LINEAR INTERPOLATION: x := (c - a) * (z - y) / (b - a) + y
+          // a = 0, b = 2048, z = 1, y = -1, c = i
+          const x = (((i - 0) * (1 - (-1))) / (numberOfSample - 0)) + (-1);
+          curves[i] = ((1 + k) * x) / (1 + k * Math.abs(x));
+        }
+        return curves;
+      } else {
+        return null; // default value
+      }
     }
   }
 })
