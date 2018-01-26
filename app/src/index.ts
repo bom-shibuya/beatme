@@ -11,14 +11,19 @@
 // import modernizr from 'modernizr';
 //
 // console.log(modernizr);
+import Vue from 'vue';
+import Vuex from 'vuex';
+import store from './store/index';
 import App from './components/App.vue';
 
-import Vue from 'vue';
+Vue.use(Vuex);
+
 
 new Vue({
   el: '#app',
   template: '<App />',
   components: {
     App
-  }
+  },
+  store
 });
