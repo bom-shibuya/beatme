@@ -1,6 +1,5 @@
 <template lang="pug">
   .wrap
-    Greeting(:greeting="greeting")
     Pads(:sounds="sounds" :getAudioBuffer="getAudioBuffer" :playSound="playSound")
     .error(v-show="error") {{ errorMsg }}
 </template>
@@ -11,7 +10,6 @@ import axios from 'axios';
 import Vue from 'vue';
 
 // import component
-import Greeting from './Greeting.vue';
 import Pads from './pads/Pads.vue';
 
 declare global {
@@ -24,7 +22,6 @@ declare global {
 export default Vue.extend({
   data: function() {
     return {
-      greeting: 'HELLO! PEACE WORLD!!!',
       sounds: [
         {
           source: 'sounds/bassdrum1.mp3'
@@ -57,7 +54,6 @@ export default Vue.extend({
     }
   },
   components: {
-    Greeting,
     Pads
   },
   created() {

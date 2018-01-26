@@ -16,7 +16,6 @@ import Vuex from 'vuex';
 import store from './store/index';
 import App from './components/App.vue';
 
-Vue.use(Vuex);
 
 
 new Vue({
