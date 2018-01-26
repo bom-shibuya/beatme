@@ -151,7 +151,7 @@ const config = {
   // ファイル名解決のための設定
   resolve: {
     // 拡張子の省略
-    extensions: ['ts', 'vue', '.js'],
+    extensions: ['.ts', '.vue', '.js'],
     // moduleのディレクトリ指定
     modules: ['node_modules'],
     // プラグインのpath解決
