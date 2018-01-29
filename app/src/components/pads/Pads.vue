@@ -7,15 +7,20 @@
 <script lang="ts">
 import Vue from 'vue';
 import Pad from './Pad.vue';
+import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   props: {
-    sounds: Array,
     getAudioBuffer: Function,
     playSound: Function
   },
   components: {
     Pad
+  },
+  computed: {
+    ...mapGetters('Sounds', {
+      'sounds': 'getSounds'
+    })
   }
 })
 </script>

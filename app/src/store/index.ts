@@ -1,74 +1,79 @@
+// import library
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex, { Store, ActionContext, Getter } from 'vuex';
 
-Vue.use(Vuex);
+// import store modules
+import Sounds from './modules/Sounds';
+import Effectors from './modules/Effectors';
 
+// declare types
 declare global {
   interface Window {
     webkitAudioContext: any;
   }
 }
 
+// start vuex!!
+Vue.use(Vuex);
+
+
+// root state
 const state = {
   audioContext: <AudioContext | null>null,
-  error: false,
-  sounds: [
-    { source: 'sounds/bassdrum1.mp3' },
-    { source: 'sounds/bassdrum2.mp3' },
-    { source: 'sounds/cymbal.mp3' },
-    { source: 'sounds/cymbal2.mp3' },
-    { source: 'sounds/tom1.mp3' },
-    { source: 'sounds/tom2.mp3' }
-  ],
-  effector: {
-    distortion: {
-      connect: false,
-      level: 0
-    }
+  error: {
+    is: false,
+    msg: <string>''
   }
 };
 
-interface SetEffectLevel {
-  key: string;
-  value: number;
-}
 
-interface SetEffectConnect {
-  key: string;
-  isConnect: boolean;
-}
-
+// root mutations
 const mutations = {
   setAudioContext (state: any, audioContext: AudioContext):void {
     state.audioContext = audioContext;
   },
-  setError (state: any, isError: boolean): void {
-    state.error = isError;
-  },
-  setEffectLevel(state: any, payload: SetEffectLevel) {
-    state.effector[payload.key].level = payload.value;
-  },
-  setEffectConnect(state: any, payload: SetEffectConnect) {
-    state.effector[payload.key].connect = payload.isConnect;
+  setError (state: any, error: { is: boolean, msg: string }):void {
+    state.error.is = error.is;
+    state.error.msg = error.msg;
   }
 };
 
+
+// root getters
+const getIsError: Getter<any, {}> = (state, getters):boolean => state.error.is;
+const getErrorMsg: Getter<any, {}> = (state, getters):string => state.error.msg;
+
+const getters = {
+  getIsError,
+  getErrorMsg
+};
+
+
+// root acctions
 const actions = {
-  createAudioContext({ commit, state, rootState }):void {
+  createAudioContext ({ commit, state, rootState }:ActionContext<{}, {}>):void {
     window.AudioContext =
     window.AudioContext || window.webkitAudioContext;
     if (window.AudioContext) {
       commit('setAudioContext', new AudioContext());
     } else {
-      commit('setError', true);
+      commit('setError', {
+        is: true,
+        msg: 'The browser of the errand is not supported'
+      });
     }
   }
 };
-const store = {
+
+
+// export stores
+export default new Vuex.Store({
   state,
   mutations,
-  actions
-};
-
-
-export default new Vuex.Store(store);
+  actions,
+  getters,
+  modules: {
+    Sounds,
+    Effectors
+  }
+});
