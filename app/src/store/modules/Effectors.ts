@@ -1,7 +1,7 @@
 const state = {
   distortion: {
-    connect: false,
-    level: 0
+    connect: true,
+    level: 0.9
   }
 };
 
