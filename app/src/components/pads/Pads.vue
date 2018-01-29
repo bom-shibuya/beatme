@@ -1,7 +1,7 @@
 <template lang="pug">
   ul.pads
     li(v-for="sound in sounds")
-      Pad(:sound="sound" :getAudioBuffer="getAudioBuffer" :playSound="playSound")
+      Pad(:sound="sound")
 </template>
 
 <script lang="ts">
@@ -10,10 +10,6 @@ import Pad from './Pad.vue';
 import { mapGetters } from 'vuex';
 
 export default Vue.extend({
-  props: {
-    getAudioBuffer: Function,
-    playSound: Function
-  },
   components: {
     Pad
   },

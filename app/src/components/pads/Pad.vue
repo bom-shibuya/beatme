@@ -6,6 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import Methods from '../../methods/';
 
 const supportTouch = 'ontouchend' in document;
 const EVENT_NAME = supportTouch ? 'touchstart' : 'click';
@@ -13,9 +14,7 @@ const EVENT_NAME = supportTouch ? 'touchstart' : 'click';
 
 export default Vue.extend({
   props: {
-    sound: Object,
-    getAudioBuffer: Function,
-    playSound: Function
+    sound: Object
   },
   data() {
     return {
@@ -25,13 +24,19 @@ export default Vue.extend({
   },
   mounted() {
     const padBtn = <HTMLElement>this.$refs.padBtn;
-    this.getAudioBuffer(this.sound.source, (buffer: AudioBuffer) => {
+    const context = this.$store.state.audioContext;
+    this.getAudioBuffer(context, this.sound.source, (buffer: AudioBuffer) => {
       this.buffer = buffer;
       this.ready = true;
       padBtn.addEventListener(EVENT_NAME, () => {
-        this.playSound(this.buffer);
+        const source = this.createSoundSource(context, this.buffer);
+        source.connect(context.destination);
+        source.start(0);
       });
-    });
+    })
+  },
+  methods: {
+    ...Methods
   }
 })
 </script>
