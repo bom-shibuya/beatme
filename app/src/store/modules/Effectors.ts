@@ -1,12 +1,13 @@
 const state = {
   distortion: {
-    connect: true,
+    connect: false,
     level: 0.9
   }
 };
 
 interface SetEffectLevel {
   key: string;
+  prop: string;
   value: number;
 }
 
@@ -16,13 +17,14 @@ interface SetEffectConnect {
 }
 
 const mutations = {
-  setEffectLevel (state: any, payload: SetEffectLevel) {
-    state.effectors[payload.key].level = payload.value;
+  setEffectLevel (localState: any, payload: SetEffectLevel) {
+    localState[payload.key][payload.prop] = payload.value;
   },
-  setEffectConnect (state: any, payload: SetEffectConnect) {
-    state.effectors[payload.key].connect = payload.isConnect;
+  setEffectConnect (localState: any, payload: SetEffectConnect) {
+    localState[payload.key].connect = payload.isConnect;
   }
 };
+
 
 export default {
   namespaced: true,

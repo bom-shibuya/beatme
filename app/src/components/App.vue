@@ -2,6 +2,7 @@
   .wrap
     Pads(:sounds="sounds")
     .error(v-show="error") {{ errorMsg }}
+    Handlers
 </template>
 
 <script lang="ts">
@@ -12,15 +13,16 @@ import { mapActions, mapGetters } from 'vuex';
 
 // import component
 import Pads from './pads/Pads.vue';
+import Handlers from './handlers/Handlers.vue';
 import Methods from '../methods/';
 
 // vue
 export default Vue.extend({
   components: {
-    Pads
+    Pads,
+    Handlers
   },
   created() {
-    console.log(this);
     this.createAudioContext();
   },
   computed: {
