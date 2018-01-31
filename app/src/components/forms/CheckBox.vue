@@ -9,7 +9,8 @@ import Vue from 'vue';
 export default Vue.extend({
   methods: {
     updateValue(value: boolean):void {
-      this.$emit('change', value)
+      this.$emit('change', value);
+      this.$emit('input', value);
     }
   }
 });

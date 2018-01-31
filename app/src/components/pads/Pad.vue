@@ -25,13 +25,15 @@ export default Vue.extend({
   mounted() {
     const padBtn = <HTMLElement>this.$refs.padBtn;
     const context = this.$store.state.audioContext;
+    const effectorsState = this.$store.state.Effectors;
     this.getAudioBuffer(context, this.sound.source, (buffer: AudioBuffer) => {
       this.buffer = buffer;
       this.ready = true;
       padBtn.addEventListener(EVENT_NAME, () => {
-        const source = this.createSoundSource(context, this.buffer);
-        source.connect(context.destination);
-        source.start(0);
+        this.playSound(context, this.buffer, effectorsState);
+        // const source = this.createSoundSource(context, this.buffer);
+        // source.connect(context.destination);
+        // source.start(0);
       });
     })
   },

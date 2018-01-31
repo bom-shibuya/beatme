@@ -17,7 +17,7 @@ const createSoundSource = (audioContext: AudioContext, buffer: AudioBuffer):Audi
   return source;
 };
 
-export default {
+export {
   getAudioBuffer,
   createSoundSource
 };

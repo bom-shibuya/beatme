@@ -19,22 +19,32 @@ const createCurveForDistortion = (amount: number, numberOfSample: number): Float
   return null; // default value
 };
 
+let distortion: WaveShaperNode | null = null;
+const NUM_SAMPLES: number = 4096;
+
 const useDistortion = (
   audioContext: AudioContext, source: AudioNode, distortionState: {
     connect: boolean,
     level: number
-  }):void => {
-  const distortion = audioContext.createWaveShaper();
-  source.connect(distortion);
-  distortion.connect(audioContext.destination);
-  // 配列のサイズだけどあまり影響ないのでとりあえず4096
-  const NUM_SAMPLES: number = 4096;
-  distortion.curve = createCurveForDistortion(
-    distortionState.level,
-    NUM_SAMPLES
-  );
+  }):AudioNode => {
+  if (distortionState.connect) {
+
+    // for first, create node
+    if (distortion === null) {
+      distortion = audioContext.createWaveShaper();
+    }
+
+    source.connect(distortion);
+    // 配列のサイズだけどあまり影響ないのでとりあえず4096
+    distortion.curve = createCurveForDistortion(
+      distortionState.level,
+      NUM_SAMPLES
+    );
+    return distortion;
+  }
+  return source;
 };
 
-export default {
+export {
   useDistortion
 };

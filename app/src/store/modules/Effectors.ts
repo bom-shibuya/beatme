@@ -1,7 +1,14 @@
 const state = {
   distortion: {
     connect: false,
-    level: 0.9
+    level: 0
+  },
+  delay: {
+    connect: false,
+    delayTime: 0,
+    dry: 1,
+    wet: 0,
+    feedback: 0
   }
 };
 
